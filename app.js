@@ -29,9 +29,18 @@ app.configure('development', function(){
 });
 
 app.get('/', function(req, res){
-    res.render('mapDisplay.html');
+    res.render('polymaps.html');
     
 });
+
+app.get('/public/images', function(req, res){
+    console.log('yo');
+});
+
+
+//app.get('/public/images/earthmap1k.jpg', function(req, res){
+//    res.sendfile('../public/images/earthmap1k.jpg');
+//});
 
 
 app.get('/users', user.list);

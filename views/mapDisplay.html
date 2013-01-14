@@ -1,25 +1,27 @@
 <html>
-<head>
-<script type="text/javascript" src="http://openlayers.org/api/OpenLayers.js"></script>
-<script type="text/javascript">
+	<head>
+		<title></title>
+		<script type="text/javascript" src="http://openlayers.org/api/OpenLayers.js"></script>
+		<script type="text/javascript">
 
-var map;
-
-function init() {
-map = new OpenLayers.Map('map');
-var wms = new OpenLayers.Layer.WMS(
-"OpenLayers WMS",
-"http://labs.metacarta.com/wms/vmap0",
-{layers: 'basic'}
-);
-
-map.addLayers([wms]);
-map.zoomToMaxExtent();
-}
-
-</script>
-</head>
-
-<body onload="init()">
-<div id="map" style="width: 600px; height: 300px"></div>
-</body>
+			var map;
+			
+			function init() {
+			map = new OpenLayers.Map('map');
+			
+			var bounds = new OpenLayers.Bounds(-180, -90, 90, 180);
+			var size = new OpenLayers.Size(10800, 5400);
+			
+			
+			var mapLayer = new OpenLayers.Layer.Image('mapLayer', '/images/earthmap1k.jpg', bounds, size);
+			
+			
+			map.addLayers([mapLayer]);
+			map.zoomToMaxExtent();
+			}
+		</script>
+	</head>
+	<body onload="init()">
+		<div id="map" style="width: 1000px; height: 600px"></div>
+	</body>
+</html>
