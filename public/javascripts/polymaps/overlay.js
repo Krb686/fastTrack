@@ -39,7 +39,7 @@ console.log('\n\n');
 map.add(po.compass()
     .pan("none"));
 
-/*
+
 function createObject(){
     if(placingObject == false){
         placingObject = true;
@@ -47,15 +47,19 @@ function createObject(){
     
     
         
-    }
+    
+    
+    
     var newObject = {
+            'lat1':0,
+            'lon1':0,
+            'lat2':0,
+            'lon2':0
             
-    }
-    var mapLayer = po.layer(overlay).tile(false);    
-    map.add(mapLayer);
+    };
     
 }
-*/
+
 
 function mouseOntoMap(){
     if(mouseOnMap == false){
@@ -119,10 +123,7 @@ function refresh () {
     
     lat1+=.01;
     lat2+=.01;
-    //console.log('refresh');
-    map.remove(mapLayer);
-    mapLayer = po.layer(overlay).tile(false);
-    map.add(mapLayer);
+    mapLayer.reload();
 }
 
 
