@@ -7,7 +7,9 @@ var express = require('express')
   , routes = require('./routes')
   , user = require('./routes/user')
   , http = require('http')
-  , path = require('path');
+  , path = require('path'),
+    amqpTrackLoader = require('./public/javascripts/amqpTrackLoader.js'),
+    io = require('socket.io');
 
 var app = express();
 
@@ -29,7 +31,7 @@ app.configure('development', function(){
 });
 
 app.get('/', function(req, res){
-    res.render('polymaps.html');
+    res.render('index.html');
     
 });
 
@@ -37,14 +39,17 @@ app.get('/public/images', function(req, res){
     console.log('yo');
 });
 
-
-//app.get('/public/images/earthmap1k.jpg', function(req, res){
-//    res.sendfile('../public/images/earthmap1k.jpg');
-//});
-
-
 app.get('/users', user.list);
 
-http.createServer(app).listen(app.get('port'), function(){
+var server = http.createServer(app);
+
+server.listen(app.get('port'), function(){
   console.log("Express server listening on port " + app.get('port'));
+  io = io.listen(server);
+  io.set('log level', 1);
+  
+  io.sockets.on('connection', amqpTrackLoader.sendData);
 });
+
+
+amqpTrackLoader.startTrackLoader();

@@ -1,0 +1,17 @@
+{
+    'type':'$GPRMC',
+    'utcTime':'123532',
+    'alertCode':'A',
+    'lat':'3730.006',
+    'latHeading':'N',
+    'lon':'0780.048',
+    'lonHeading':'W',
+    'speedKnots':'70',
+    'angle':'277.5',
+    'date':'180113',
+    'id':'1'
+}
+    
+        
+        
+    

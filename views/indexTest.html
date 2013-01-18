@@ -1,0 +1,84 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <script type="text/javascript" src="/javascripts/polymaps/polymaps.js"></script>
+    <script type="text/javascript" src="/javascripts/roundDecimal.js"></script>
+    <script type="text/javascript" src="/javascripts/jquery-1.9.0.min.js"></script>
+    
+    <link rel="stylesheet" href="http://code.jquery.com/ui/1.9.2/themes/base/jquery-ui.css" />
+	<script src="http://code.jquery.com/ui/1.9.2/jquery-ui.js"></script>
+	
+	
+	<script>
+		$(function() {
+		$( "#tabs" ).tabs();
+		});
+	</script>
+    
+    <style type="text/css">
+		@import url("/stylesheets/tipsy.css");
+		@import url("/stylesheets/example.css");
+
+		.layer circle {
+		  fill: lightcoral;
+		  fill-opacity: .5;
+		  stroke: brown;
+		  stroke-width: 1.5px;
+		}	
+    </style>
+  </head>
+  <body style="width:100%">
+  	<div id="tabs" style="width:100%-5px">
+		<ul>
+			<li><a href="#mapDisplay">Map Display</a></li>
+			<li><a href="#dv">Data Viewer</a></li>
+			<li><a href="#trackLogger">Track Logger</a>
+			<li><a href="#simulator">Simulator</a>
+		</ul>
+		<div id="mapDisplay" style="height:800px;width:100%-5px;background-color:#AAAAAA">
+			<div id="mapTable"></div>
+			<div id="map" style="height:768px;width:300px" onmouseover="mouseOntoMap();" onmouseout="mouseOutofMap();" onmousemove="mouseMoveHandler(event);" onClick="mapClick();"></div>
+		</div>
+		<div id="dv">
+			<div id="dvDiv" style="width:1210px;height:590px;background-color:#CCCCCC">
+				<label id="activeObjLabel">Active Objects: 0</label>
+				<hr>
+				<ol></ol>
+			</div>
+		</div>
+		<div id="trackLogger">
+			<label>Realtime Tracks:</label>
+			<br>
+			<textarea id="testText"></textarea>
+		</div>
+	</div>
+  		
+  	<script type="text/javascript" src="/javascripts/tipsyMove.js" ></script>
+  	<script src="/socket.io/socket.io.js"></script>
+  	<script type="text/javascript">
+	    var socket = io.connect('http://localhost');
+	    var counter = 0;
+	  	
+	    socket.on('TMS', function(data){
+	        counter++;
+ 		    
+ 		    trackArray.push(data);
+ 		    
+ 		    var string = data.type + ','
+ 		    			+ data.utcTime + ','
+ 		    			+ data.alertCode + ','
+ 		    			+ data.lat + ','
+ 		    			+ data.latHeading + ','
+ 		    			+ data.lon + ','
+ 		    			+ data.lonHeading + ','
+ 		    			+ data.speedKnots + ','
+ 		    			+ data.angle + ','
+ 		    			+ data.date + ','
+ 		    			+ data.id;
+ 		    
+ 		    
+ 		   document.getElementById("testText").innerHTML +=string + "\n";
+   		});
+  	</script>
+  </body>
+</html>

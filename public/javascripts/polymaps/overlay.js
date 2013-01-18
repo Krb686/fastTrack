@@ -9,13 +9,20 @@ var mouseLat = 0;
 var coordsChecked = false;
 var placingObject = false;
 
-var lon1 = -122.518;
-var lat1 = 37.816;
+var lon1 = -122;
+var lat1 = 38;
 
-var lon2 = -122.375;
-var lat2 = 37.755;
+var lon2 = -121;
+var lat2 = 37;
+
+var lon3 = -120;
+var lat3 = 38;
+
+var lon4 = -119;
+var lat4 = 37;
 
 var map = po.map()
+    .container(document.getElementById("map").appendChild(po.svg("svg")))
     .container(document.getElementById("map").appendChild(po.svg("svg")))
     .zoomRange([1, 18])
     .add(po.interact());
@@ -32,33 +39,10 @@ map.add(mapLayer);
 
 
 
-var geoJsonLayer = po.geoJson();
-console.log('\n\n');
-
-
 map.add(po.compass()
     .pan("none"));
 
 
-function createObject(){
-    if(placingObject == false){
-        placingObject = true;
-    }
-    
-    
-        
-    
-    
-    
-    var newObject = {
-            'lat1':0,
-            'lon1':0,
-            'lat2':0,
-            'lon2':0
-            
-    };
-    
-}
 
 
 function mouseOntoMap(){
@@ -131,15 +115,40 @@ function refresh () {
 function overlay(tile, proj) {
   proj = proj(tile);
   
-  var tl = proj.locationPoint({lon: lon1, lat: lat1}),
-      br = proj.locationPoint({lon: lon2, lat: lat2}),
+  console.log(tile);
+  
+  
+  var topLeft1 = proj.locationPoint({lon: lon1, lat: lat1}),
+      bottomRight1 = proj.locationPoint({lon: lon2, lat: lat2}),
       image = tile.element = po.svg("image");
+  
+  console.log(tile);
+  
+  
   image.setAttribute("preserveAspectRatio", "none");
-  image.setAttribute("x", tl.x);
-  image.setAttribute("y", tl.y);
-  image.setAttribute("width", br.x - tl.x);
-  image.setAttribute("height", br.y - tl.y);
+  image.setAttribute("x", topLeft1.x);
+  image.setAttribute("y", topLeft1.y);
+  image.setAttribute("width", bottomRight1.x - topLeft1.x);
+  image.setAttribute("height", bottomRight1.y - topLeft1.y);
   image.setAttributeNS("http://www.w3.org/1999/xlink", "href", "/images/star.png");
+  
+
+  var topLeft2 = proj.locationPoint({lon: lon3, lat: lat3}),
+  bottomRight2 = proj.locationPoint({lon: lon4, lat: lat4}),
+  image2 = tile.element = po.svg("image");
+  
+  
+  image2.setAttribute("preserveAspectRatio", "none");
+  image2.setAttribute("x", topLeft2.x);
+  image2.setAttribute("y", topLeft2.y);
+  image2.setAttribute("width", bottomRight2.x - topLeft2.x);
+  image2.setAttribute("height", bottomRight2.y - topLeft2.y);
+  image2.setAttributeNS("http://www.w3.org/1999/xlink", "href", "/images/star.png");
+
+
+
+
+  
 }
 
 
