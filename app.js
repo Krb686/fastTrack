@@ -3,15 +3,18 @@
  * Module dependencies.
  */
 
-var express = require('express')
-  , routes = require('./routes')
-  , user = require('./routes/user')
-  , http = require('http')
-  , path = require('path'),
-    amqpTrackLoader = require('./public/javascripts/amqpTrackLoader.js'),
-    io = require('socket.io');
+var express = require('express');
+var routes = require('./routes');
+var user = require('./routes/user');
+var http = require('http');
+var path = require('path');
+var io = require('socket.io');
+var amqp = require('amqp');
 
 var app = express();
+
+var clientSocket = null;
+var users = [];
 
 app.configure(function(){
   app.set('port', process.env.PORT || 3000);
@@ -31,13 +34,10 @@ app.configure('development', function(){
 });
 
 app.get('/', function(req, res){
-    res.render('index.html');
+    res.render('indexLeaflet.html');
     
 });
 
-app.get('/public/images', function(req, res){
-    console.log('yo');
-});
 
 app.get('/users', user.list);
 
@@ -48,8 +48,46 @@ server.listen(app.get('port'), function(){
   io = io.listen(server);
   io.set('log level', 1);
   
-  io.sockets.on('connection', amqpTrackLoader.sendData);
+  io.sockets.on('connection', sendSocket);
 });
 
 
-amqpTrackLoader.startTrackLoader();
+startTrackLoader();
+
+function startTrackLoader () {
+    var connection = amqp.createConnection({host:'localhost'});
+
+
+    connection.on('ready', function(){
+        
+        //Create queue
+        queueTMS = connection.queue('TMS', {autoDelete:false}, function(queue){
+            
+            console.log('TMS Queue has been created');
+
+            queue.subscribe(msgReceiver);
+            
+            
+        });
+    });
+}
+
+
+function msgReceiver(msg){
+    console.log('Got EM msg');
+    
+    
+    //If a user has connected, send data to them
+    if(clientSocket){
+        console.log('Emitting socket msg\n');
+        clientSocket.emit('TMS', msg);
+    } else {
+        console.log("No users connected!");
+    }
+    
+}
+
+function sendSocket(socket){
+    clientSocket = socket;
+    
+}

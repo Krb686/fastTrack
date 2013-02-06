@@ -1,12 +1,15 @@
 <!DOCTYPE html>
 <html>
   <head>
-    <script type="text/javascript" src="/javascripts/polymaps/polymaps.js"></script>
     <script type="text/javascript" src="/javascripts/roundDecimal.js"></script>
     <script type="text/javascript" src="/javascripts/jquery-1.9.0.min.js"></script>
+    <script src="http://code.jquery.com/ui/1.9.2/jquery-ui.js"></script>
+    <script src="http://cdn.leafletjs.com/leaflet-0.5/leaflet.js"></script>
+    <script type="text/javascript" src="/javascripts/jQueryRotate.2.2.js"></script>
     
+    <link rel="stylesheet" href="http://cdn.leafletjs.com/leaflet-0.5/leaflet.css" />
     <link rel="stylesheet" href="http://code.jquery.com/ui/1.9.2/themes/base/jquery-ui.css" />
-	<script src="http://code.jquery.com/ui/1.9.2/jquery-ui.js"></script>
+	
 	
 	
 	<script>
@@ -14,6 +17,7 @@
 		$( "#tabs" ).tabs();
 		});
 	</script>
+    
     
     <style type="text/css">
 		@import url("/stylesheets/tipsy.css");
@@ -39,13 +43,13 @@
 			<td style="background-color:#FFD700;text-align:top;">
 				<b>Menu</b><br>
 				<hr>
-				<input type="submit" name="createPlaneSubmit" value="Create Object"  /><br>
+				<input type="submit" name="createPlaneSubmit" value="Create Object" onClick="createObject();" /><br>
 				<input type="submit" name="deletePlaneSubmit" value="Delete Plane"/><br>
 				<hr>
-				<input type="submit" name="startTrackingSubmit" value="Start Tracking" />
-				<input type="submit" name="stopTrackingSubmit" value="Stop Tracking" />
+				<input type="submit" name="startTrackingSubmit" value="Start Tracking" onClick="startTracking();"/>
+				<input type="submit" name="stopTrackingSubmit" value="Stop Tracking" onClick="stopTracking();"/>
 				<br>
-				Mouse Pos: <input type="checkbox" name="mousePosCheck" value="Mouse Pos." />
+				Mouse Pos: <input type="checkbox" name="mousePosCheck" value="Mouse Pos." onClick="showCoords();"/>
 				<label id="textCoords"></label>
 			</td>
 		</tr>
@@ -58,7 +62,7 @@
 						<li><a href="#trackLogger">Track Logger</a>
 						<li><a href="#simulator">Simulator</a>
 					</ul>
-					<div id="map" style="height:590px;width:1210px" ></div>
+					<div id="map" style="height:590px;width:1210px" onmouseover="mouseOntoMap();" onmouseout="mouseOutofMap();" onmousemove="mouseMoveHandler(event);" onClick="mapClick();"></div>
 					<div id="dv">
 						<div id="dvDiv" style="width:1210px;height:590px;background-color:#CCCCCC">
 							<label id="activeObjLabel">Active Objects: 0</label>
@@ -75,8 +79,32 @@
 			</td>
 		</tr>
   	</table>
-  	<script type="text/javascript" src="/javascripts/tipsyMove.js" ></script>
   	<script src="/socket.io/socket.io.js"></script>
-  	
+    <script type="text/javascript" src="javascripts/leafletControl.js"></script>
+    <script type="text/javascript">
+	    var socket = io.connect('http://localhost');
+	    var counter = 0;
+	  	
+	    socket.on('TMS', function(data){
+	        counter++;
+ 		    
+ 		    trackArray.push(data);
+ 		    
+ 		    var string = data.type + ','
+ 		    			+ data.utcTime + ','
+ 		    			+ data.alertCode + ','
+ 		    			+ data.lat + ','
+ 		    			+ data.latHeading + ','
+ 		    			+ data.lon + ','
+ 		    			+ data.lonHeading + ','
+ 		    			+ data.speedKnots + ','
+ 		    			+ data.angle + ','
+ 		    			+ data.date + ','
+ 		    			+ data.id;
+ 		    
+ 		    
+ 		   document.getElementById("testText").innerHTML +=string + "\n";
+   		});
+  	</script>
   </body>
 </html>

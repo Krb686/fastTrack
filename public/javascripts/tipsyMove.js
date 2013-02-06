@@ -1,6 +1,6 @@
 
 var radius = 10, tips = {};
-var map, po, geoJsonLayer, tracking, intervalId, coordsChecked = false, mouseOnMap = false, placingObject = false;
+var map, polymaps, geoJsonLayer, tracking, intervalId, coordsChecked = false, mouseOnMap = false, placingObject = false;
 var objects = [];
 var trackArray = [];
 var idCounter = 0;
@@ -9,23 +9,22 @@ var tempObject;
 
 function buildMap(){
 
-    po = org.polymaps;
+    polymaps = org.polymaps;
 
-    map = po.map()
-        .container(document.getElementById("map").appendChild(po.svg("svg")))
+    map = polymaps.map()
+        .container(document.getElementById("map").appendChild(polymaps.svg("svg")))
         .center({lon: -122.20877392578124, lat: 37.65175620758778})
-        .zoom(10)
-        .add(po.interact())
+        .zoom(8)
+        .add(polymaps.interact())
         .on("move", move)
         .on("resize", move);
 
-    map.add(po.image()
-        .url(po.url("http://{S}tile.cloudmade.com"
-        + "/1a1b06b230af4efdbb989ea99e9841af" // http://cloudmade.com/register
-        + "/998/256/{Z}/{X}/{Y}.png")
-        .hosts(["a.", "b.", "c.", ""])));
+    map.add(polymaps.image()
+        .url(polymaps.url("cloudmade/images/998/256/{Z}/{X}/{Y}.png")));
+    
+    map.add
         
-    map.add(po.compass()
+    map.add(polymaps.compass()
         .pan("none"));
 }
 
@@ -33,9 +32,9 @@ function buildMap(){
 function addDefaultObjects(){
   //Default objects
     var obj1 = {
-      "id": "stanford",
+      "id": "airplane0",
       "properties": {
-        "html": "<img src='stanford.png' width=200 height=200>"
+        "html": "<img src='images/airplane.png' width=200 height=200>"
       },
       "geometry": {
         "coordinates": [-122.16894848632812, 37.42961865341856],
@@ -64,7 +63,7 @@ function addDefaultObjects(){
 
 
 function createGeoJsonLayer(){
-    geoJsonLayer = po.geoJson();
+    geoJsonLayer = polymaps.geoJson();
     geoJsonLayer.on("load", load);
     geoJsonLayer.features(objects);
 
@@ -282,86 +281,14 @@ function showCoords(){
     }
 }
 
-function mouseMoveHandler(event){
-    if(placingObject == true){
-        mouseX = event.clientX;
-        mouseY = event.clientY;
-        
-        mouseX-=34;
-        mouseY-=264;
-        
-        coords = map.pointLocation({x:mouseX, y:mouseY});
-        mouseLon = coords.lon;
-        mouseLat = coords.lat;
-        
-        mouseLon = roundDecimal(mouseLon, 9);
-        mouseLat = roundDecimal(mouseLat, 9);
-        
-        
-        
-        tempObject.geometry.coordinates[0] = mouseLon;
-        tempObject.geometry.coordinates[1] = mouseLat;
-        
-        document.getElementById("textCoords").innerHTML = mouseX + ' ' + mouseY;
-        geoJsonLayer.reload();
-        
-    } else {
-        if(coordsChecked == true){
-            mouseX = event.clientX;
-            mouseY = event.clientY;
-            coords = map.pointLocation({x:mouseX, y:mouseY});
-            mouseLon = coords.lon;
-            mouseLat = coords.lat;
-            
-            mouseLon = roundDecimal(mouseLon, 9);
-            mouseLat = roundDecimal(mouseLat, 9);
-            
-            document.getElementById("textCoords").innerHTML="Latitude: " + mouseLat + "\nLongitude: " + mouseLon;
-        }
-    }    
-}
-
-function mapClick(){
-    if(placingObject == true){
-        placingObject = false;
-        
-        var newObject = {
-            "id": idCounter,
-            "geometry": {
-              "coordinates": [0, 0],
-              "type": "Point"
-            }
-                
-                
-        };
-        
-        newObject.geometry.coordinates[0] = tempObject.geometry.coordinates[0];
-        newObject.geometry.coordinates[1] = tempObject.geometry.coordinates[1];
-        
-
-        document.getElementById("activeObjLabel").innerHTML = "Active Objects: " + objects.length;
-        
-        $("#dvDiv ol").append("<li id=dvObj" + newObject.id + ">ID: " + newObject.id  + 
-                                "<ul>" + 
-                                    "<li id=dvObj" + newObject.id + "lat>Latitude: " + newObject.geometry.coordinates[1] + 
-                                    "<li id=dvObj" + newObject.id + "lon>Longitude: " + newObject.geometry.coordinates[0] +  
-                                "<ul>");
-    }
-}
 
 
-function mouseOntoMap(){
-    if(mouseOnMap == false){
-        mouseOnMap = true;
-    }
-}
 
-function mouseOutofMap(){
-    if(mouseOnMap == true){
-        mouseOnMap = false;
-    }
-}
+
+
+
 
 
 buildMap();
+addDefaultObjects();
 createGeoJsonLayer();

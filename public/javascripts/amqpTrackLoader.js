@@ -1,7 +1,5 @@
 var amqp = require('amqp');
 
-var receiveDataFlag = false;
-
 var clientSocket = null;
 
 
@@ -23,8 +21,6 @@ function startTrackLoader () {
         });
     });
 }
-
-
 
 
 function msgHandler(msg){
