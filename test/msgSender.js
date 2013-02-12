@@ -45,12 +45,42 @@ connection.on('ready', function(){
     
 });
 
+var difLat1, difLon1, difLat2, difLon2 = null;
+
 function moveObjects(){
+    
+    
     
     object.utcTime+=1;
     object.lon-=.1;
+    
+    if(difLat1 != null && difLon1 != null){
+        var difLat1 = lastLat1 - object.lat;
+        var difLon1 = lastLon1 - object.lon;
+    } else {
+        var difLat1 = 0;
+        var difLon1 = 0;
+    }
+    
+    
+    
     object2.utcTime+=1;
     object2.lat+=.1;
     object2.lon-=.1;
+    
+    if(difLat2 != null && difLon2 != null){
+        var difLat2 = lastLat1 - object.lat;
+        var difLon2 = lastLon1 - object.lon;
+    } else {
+        var difLat2 = 0;
+        var difLon2 = 0;
+    }
+    
+    
+    var angle1 = Math.atan(difLat1/difLon1);
+    var angle2 = Math.atan(difLat2/difLon2);
+    
+    console.log(angle1);
+    
     
 }

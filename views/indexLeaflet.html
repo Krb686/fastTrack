@@ -1,11 +1,13 @@
 <!DOCTYPE html>
 <html>
   <head>
+  	
     <script type="text/javascript" src="/javascripts/roundDecimal.js"></script>
     <script type="text/javascript" src="/javascripts/jquery-1.9.0.min.js"></script>
     <script src="http://code.jquery.com/ui/1.9.2/jquery-ui.js"></script>
     <script src="http://cdn.leafletjs.com/leaflet-0.5/leaflet.js"></script>
     <script type="text/javascript" src="/javascripts/jQueryRotate.2.2.js"></script>
+    
     
     <link rel="stylesheet" href="http://cdn.leafletjs.com/leaflet-0.5/leaflet.css" />
     <link rel="stylesheet" href="http://code.jquery.com/ui/1.9.2/themes/base/jquery-ui.css" />
@@ -28,7 +30,9 @@
 		  fill-opacity: .5;
 		  stroke: brown;
 		  stroke-width: 1.5px;
-		}	
+		}
+		
+		
     </style>
   </head>
   <body>
@@ -80,7 +84,7 @@
 		</tr>
   	</table>
   	<script src="/socket.io/socket.io.js"></script>
-    <script type="text/javascript" src="javascripts/leafletControl.js"></script>
+    <script type="text/javascript" src="/javascripts/leafletControl.js"></script>
     <script type="text/javascript">
 	    var socket = io.connect('http://localhost');
 	    var counter = 0;

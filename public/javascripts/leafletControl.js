@@ -1,12 +1,13 @@
 //Leaflet Control
 
-var objects = [];
+
 
 var radius = 10, tips = {};
 var map, polymaps, geoJsonLayer, tracking, intervalId, coordsChecked = false, mouseOnMap = false, placingObject = false;
-var objects = [];
+var objects = {
+        length:0
+};
 var trackArray = [];
-var idCounter = 0;
 var tempObject;
 
 var map = L.map('map', {
@@ -22,7 +23,9 @@ L.tileLayer('http://{s}.tile.cloudmade.com/4d930419c5694793952eb15712060385/998/
 }).addTo(map);
 
 
+
 addDefaultObjects();
+
 
 
 
@@ -30,39 +33,41 @@ function addDefaultObjects(){
 //Default objects
     
     var marker = L.marker([38.85, -77.38], {
-        icon:L.icon({
-            iconUrl:"../images/airplane.png",
-            iconSize:[20,20]
+        icon:L.divIcon({
+            iconSize:[20,20],
+            html:"<img class='leaflet-div-icon-img' src='/images/airplane.gif'>"
         })
     }).addTo(map);
+    
+    $(".leaflet-marker-icon").css({background:"transparent", border:"0px"});
     
     marker.bindPopup("<b>Hello world!</b><br>I am a popup.");
     
     var newObject = {
         "id": "1",
+        "type":"plane",
         "properties": {
-            "url": "../images/airplane.png",
-            "bounds":[[38.8, -77.3], [38.9, -77.28]]
-        },
-        "geometry": {
             "coordinates": [38.85, -77.38],
-            "type": "Point"
+            "angle":0,
+            "speedKnots":0
         },
-        "lastTrack":null,
-        "data":{
-            //
-        },
-        "marker":marker
+        "tracks":[],
+        "other":{
+            "marker":marker,
+            "icon":"images/airplane.png"
+        }
     };
   
-    idCounter++;
-    objects.push(newObject);
+    objects.length++;
+    objects["1"] = newObject;
+    
+    //update();
   
     document.getElementById("activeObjLabel").innerHTML = "Active Objects: " + objects.length;
     $("#dvDiv ol").append("<li id=dvObj" + newObject.id + ">ID: " + newObject.id  + 
             "<ul>" + 
-            "<li id=dvObj" + newObject.id + "lat>Latitude: " + newObject.geometry.coordinates[1] + 
-            "<li id=dvObj" + newObject.id + "lon>Longitude: " + newObject.geometry.coordinates[0] +  
+            "<li id=dvObj" + newObject.id + "lat>Latitude: " + newObject.properties.coordinates[1] + 
+            "<li id=dvObj" + newObject.id + "lon>Longitude: " + newObject.properties.coordinates[0] +  
         "<ul>");
        
 }
@@ -91,10 +96,10 @@ function mouseMoveHandler(event){
         lat = roundDecimal(lat, 9);
         lng = roundDecimal(lng, 9);
        
-        tempObject.geometry.coordinates[0] = lng;
-        tempObject.geometry.coordinates[1] = lat;
+        tempObject.properties.coordinates[0] = lng;
+        tempObject.properties.coordinates[1] = lat;
         
-        tempObject.marker.setLatLng([lat, lng]);
+        tempObject.other.marker.setLatLng([lat, lng]);
         
         
         
@@ -136,11 +141,11 @@ function mapClick(){
         
         $("#dvDiv ol").append("<li id=dvObj" + newObject.id + ">ID: " + newObject.id  + 
                                 "<ul>" + 
-                                    "<li id=dvObj" + newObject.id + "lat>Latitude: " + newObject.geometry.coordinates[1] + 
-                                    "<li id=dvObj" + newObject.id + "lon>Longitude: " + newObject.geometry.coordinates[0] +  
+                                    "<li id=dvObj" + newObject.id + "lat>Latitude: " + newObject.properties.coordinates[1] + 
+                                    "<li id=dvObj" + newObject.id + "lon>Longitude: " + newObject.properties.coordinates[0] +  
                                 "<ul>");
     
-        objects.push(newObject);
+        objects[newObject.id] = newObject;
         
     }
 }
@@ -171,55 +176,44 @@ function stopTracking(){
 
 function createObject(track){
     
-    idCounter++;
-    
-    
-    
+    objects.length++;
+  
     if(track){
         //console.log('making object from track');
-        
-        
-        var marker = L.marker([track.lat, track.lon], {
-            icon:L.icon({
-                iconUrl:"../images/airplane.png",
-                iconSize:[20,20]
-            })
-        });
-        
-        marker.addTo(map);
-        
-        
+     
         tempObject = {
-                "id": idCounter,
-                "geometry": {
-                  "coordinates": [track.lon, track.lat],
-                  "type": "Point"
-                 },
-                 "lastTrack":true,
-                 "data": {
-                     "type":track.type,
-                     "utcTime":track.utcTime,
-                     "alertCode":track.alertCode,
-                     "lat":track.lat,
-                     "latHeading":track.latHeading,
-                     "lon":track.lon,
-                     "lonHeading":track.lonHeading,
-                     "speedKnots":track.speedKnots,
-                     "angle":track.angle,
-                     "date":track.date
-                 },
-                 "marker":marker
+            "id": objects.length,
+            "type":"plane",
+            "properties": {
+              "coordinates": [track.lon, track.lat],
+              "angle":track.angle,
+              "speedKnots":track.speedKnots
+             },
+             "tracks":[track],
+             "other":{
+                 "marker":L.marker([track.lat, track.lon], {
+                     icon:L.divIcon({
+                         iconSize:[20,20],
+                         html:"<img class='leaflet-div-icon-img' src='/images/airplane.gif'>"
+                     })
+                 }).addTo(map),
+                 "icon":"images/airplane.png"
+             }      
         };
+        
+        
+        
+        
         
         document.getElementById("activeObjLabel").innerHTML = "Active Objects: " + objects.length;
         
         $("#dvDiv ol").append("<li id=dvObj" + tempObject.id + ">ID: " + tempObject.id  + 
                                 "<ul>" + 
-                                    "<li id=dvObj" + tempObject.id + "lat>Latitude: " + tempObject.geometry.coordinates[1] + 
-                                    "<li id=dvObj" + tempObject.id + "lon>Longitude: " + tempObject.geometry.coordinates[0] +  
+                                    "<li id=dvObj" + tempObject.id + "lat>Latitude: " + tempObject.properties.coordinates[1] + 
+                                    "<li id=dvObj" + tempObject.id + "lon>Longitude: " + tempObject.properties.coordinates[0] +  
                                 "<ul>");
         
-        objects.push(tempObject);
+        objects[tempObject.id] = tempObject;
         
     } else {
         
@@ -239,133 +233,96 @@ function createObject(track){
         marker.addTo(map);
         
         tempObject = {
-                "id": idCounter,
-                "geometry": {
-                  "coordinates": [0, 0],
-                  "type": "Point"
-                 },
-                 "lastTrack":null,
-                 "data": {
-                     "type":null,
-                     "utcTime":null,
-                     "alertCode":null,
-                     "lat":null,
-                     "latHeading":null,
-                     "lon":null,
-                     "lonHeading":null,
-                     "speedKnots":null,
-                     "angle":null,
-                     "date":null
-                 },
-                 "marker":marker
-            };
-    }    
+            "id": objects.length,
+            "type":"plane",
+            "properties": {
+              "coordinates": [0, 0],
+              "angle":0,
+              "speedKnots":0
+             },
+             "tracks":[],
+             "other":{
+                 "marker":L.marker([0, 0], {
+                     icon:L.divIcon({
+                         iconSize:[20,20],
+                         html:"<img class='leaflet-div-icon-img' src='/images/airplane.gif'>"
+                     })
+                 }).addTo(map),
+                 "icon":"images/airplane.png"
+             }      
+        };
+    }
+    
+    $(".leaflet-marker-icon").css({background:"transparent", border:"0px"});
 }
 
 
 
 rotangle = 20;
 function refresh(){
+    
     if(trackArray.length > 0){
         
+        var i=0;
         //Progress through received tracks
-          for(var i=0;i<trackArray.length;i++){
-              var objectExists = false;
-              var trackId = trackArray[i].id;
-              
-              //Compare to known objects
-              for(var j=0;j<objects.length;j++){
-                  var objId = objects[j].id;
-                  
-                  //console.log("TrackId: " + trackId + "objId: " + objId);
-                  if(trackId == objId){
-                      objectExists = true;
-                      var obj = objects[j];
-                      
-                      
-                      
-                      
-                      var type = trackArray[i].type;
-                      var utcTime = trackArray[i].utcTime;
-                      var alertCode = trackArray[i].alertCode;
-                      var lat = trackArray[i].lat;
-                      var latHeading = trackArray[i].latHeading;
-                      var lon = trackArray[i].lon;
-                      var lonHeading = trackArray[i].lonHeading;
-                      var speedKnots = trackArray[i].speedKnots;
-                      var angle = trackArray[i].angle;
-                      var date = trackArray[i].date;
-                      var id = trackArray[i].id;
-                      
-                      document.getElementById("dvObj" + objId + "lat").innerHTML = "Latitude: " + lat;
-                      document.getElementById("dvObj" + objId + "lon").innerHTML = "Longitude: " + lon;
-                      
-                      
-                      if(obj.lastTrack == null){
-                          
-                          
-                          obj.lastTrack = true;
-                          obj.data.type = type;
-                          obj.data.utcTime = utcTime;
-                          obj.data.alertCode = alertCode;
-                          obj.data.lat = lat;
-                          obj.data.latHeading = latHeading;
-                          obj.data.lon = lon;
-                          obj.data.lonHeading = lonHeading;
-                          obj.data.speedKnots = speedKnots;
-                          obj.data.angle = angle;
-                          obj.data.date = date;
-                          obj.data.id = id;
-                      } else {
-                          var latMove = obj.data.lat - lat;
-                          var lonMove = obj.data.lon - lon;
-                          
-                          obj.geometry.coordinates[0]+=lonMove;
-                          obj.geometry.coordinates[1]+=latMove;
-                          
-                          obj.data.type = type;
-                          obj.data.utcTime = utcTime;
-                          obj.data.alertCode = alertCode;
-                          obj.data.lat = lat;
-                          obj.data.latHeading = latHeading;
-                          obj.data.lon = lon;
-                          obj.data.lonHeading = lonHeading;
-                          obj.data.speedKnots = speedKnots;
-                          obj.data.angle = angle;
-                          obj.data.date = date;
-                          obj.data.id = id;
-                          
-                           
-                      } //previous track existence 
-                  }//track id matches object id   
-              }//loop through array of objects
-              
-              
-              
-              if(objectExists == false){
-                  
-                  //time to create a new object
-                  //console.log('make a new object!');
-                  createObject(trackArray[i]);
-              }
-          }
-      }
-    
-    
-    var latLng = objects[0].geometry.coordinates;
+        for(i=0;i<trackArray.length;i++){
+            var trackId = trackArray[i].id;
+            
+            
+            if(objects[trackId]){
+                //exists
+                var tLat = trackArray[i].lat;
+                var tLon = trackArray[i].lon;
+                var tAngle = trackArray[i].angle;
+                var tSpeed = trackArray[i].speedKnots;
+                
+                //Update lat-lon
+                objects[trackId].properties.coordinates[0] = tLat;
+                objects[trackId].properties.coordinates[1] = tLon;
+                
+                //Update angle and speed
+                objects[trackId].properties.angle = tAngle;
+                objects[trackId].properties.speedKnots = tSpeed;
+                
+                //Add track
+                objects[trackId].tracks.push(trackArray[i]);
+                
+                
+                objects[trackId].other.marker.setLatLng([tLat, tLon]);
+                
+                
+                $(".leaflet-div-icon-img:first").rotate(tAngle);
+                
+                document.getElementById("dvObj" + trackArray[i].id + "lat").innerHTML = "Latitude: " + trackArray[i].lat;
+                document.getElementById("dvObj" + trackArray[i].id + "lon").innerHTML = "Longitude: " + trackArray[i].lon;
+                   
+            } else {
+                createObject(trackArray[i]);
+                console.log('making');
+            }
+        }
+    }
+            
+        
+  
+    /*
+    //test
+    var latLng = objects['1'].properties.coordinates;
     var lat = latLng[0];
     var lng = latLng[1];
     
     lat+=.01;
-    objects[0].geometry.coordinates[0] = lat;
+    objects['1'].properties.coordinates[0] = lat;
     
-    //console.log(lat);
-    objects[0].marker.setLatLng([lat, lng]);
+    objects['1'].other.marker.setLatLng([lat, lng]);
     
     rotangle+=5;
-    console.log(angle);
-    var img = $(".leaflet-marker-icon:first").rotate(rotangle);
-    //
     
+    
+    
+    
+    $(".leaflet-marker-icon:first").css({background:"transparent", border:"0px"});
+    //
+    */
 }
 
