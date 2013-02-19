@@ -50,7 +50,6 @@ var difLat1, difLon1, difLat2, difLon2 = null;
 function moveObjects(){
     
     
-    
     object.utcTime+=1;
     object.lon-=.1;
     

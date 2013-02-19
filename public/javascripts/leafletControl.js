@@ -48,8 +48,8 @@ function addDefaultObjects(){
         "type":"plane",
         "properties": {
             "coordinates": [38.85, -77.38],
-            "angle":0,
-            "speedKnots":0
+            "angle":45,
+            "speedMPH":20
         },
         "tracks":[],
         "other":{
@@ -163,7 +163,7 @@ function showCoords(){
 function startTracking(){
     if(!tracking){
         tracking = true;
-        intervalId = setInterval(refresh, 1000);
+        intervalId = setInterval(refresh, 10);
     }
 }
 
@@ -187,7 +187,7 @@ function createObject(track){
             "properties": {
               "coordinates": [track.lon, track.lat],
               "angle":track.angle,
-              "speedKnots":track.speedKnots
+              "speedMPH":track.speedMPH
              },
              "tracks":[track],
              "other":{
@@ -238,7 +238,7 @@ function createObject(track){
             "properties": {
               "coordinates": [0, 0],
               "angle":0,
-              "speedKnots":0
+              "speedMPH":0
              },
              "tracks":[],
              "other":{
@@ -259,6 +259,8 @@ function createObject(track){
 
 
 rotangle = 20;
+var latChange;
+var lngChange;
 function refresh(){
     
     if(trackArray.length > 0){
@@ -274,7 +276,7 @@ function refresh(){
                 var tLat = trackArray[i].lat;
                 var tLon = trackArray[i].lon;
                 var tAngle = trackArray[i].angle;
-                var tSpeed = trackArray[i].speedKnots;
+                var tSpeed = trackArray[i].speedMPH;
                 
                 //Update lat-lon
                 objects[trackId].properties.coordinates[0] = tLat;
@@ -282,7 +284,7 @@ function refresh(){
                 
                 //Update angle and speed
                 objects[trackId].properties.angle = tAngle;
-                objects[trackId].properties.speedKnots = tSpeed;
+                objects[trackId].properties.speedMPH = tSpeed;
                 
                 //Add track
                 objects[trackId].tracks.push(trackArray[i]);
@@ -301,28 +303,82 @@ function refresh(){
                 console.log('making');
             }
         }
-    }
-            
+    } else {
+        //manual movement for testing purposes
+        var lat = objects["1"].properties.coordinates[0];
+        var lng = objects["1"].properties.coordinates[1];
+        var angle = objects["1"].properties.angle;
+        var speedMPH = objects["1"].properties.speedMPH;
         
-  
-    /*
-    //test
-    var latLng = objects['1'].properties.coordinates;
-    var lat = latLng[0];
-    var lng = latLng[1];
+        var miles = speedMPH/3600;
+        
+        var realAngle = (angle*-1)+450;
+        
+        
+        
+        if(angle >= 360){
+            console.log('changeeeeeeee');
+            angle-=360;
+        } else if(angle<=0){
+            angle+=360;
+        }
+        
+        
+        
+        var realAngleRad = realAngle * (Math.PI/180);
+        
+        var xMiles = Math.abs(Math.cos(realAngleRad) * miles);
+        var yMiles = Math.abs(Math.sin(realAngleRad) * miles);
+        
+      
+        latChange = yMiles / 69.11;
+        
+        lngChange = xMiles / (69.11*Math.cos(lat));
+        
+        //console.log(xMiles);
+        console.log(xMiles);
+        console.log(angle);
+        console.log("");
+        
+        
+        
+        
+        
+        //Figure out how to add distance
+        if(realAngle <= 90){
+            lat+=latChange;
+            lng+=lngChange;
+        } else if(realAngle <= 180){
+            lat+=latChange;
+            lng-=lngChange;
+        } else if(realAngle <= 270){
+            lat-=latChange;
+            lng-=lngChange;
+        } else{
+            lat-=latChange;
+            lng+=lngChange;
+        }
+        
+        angle+=1;
+        
+        
+        
+        
+        objects["1"].properties.coordinates[0]=lat;
+        objects["1"].properties.coordinates[1]=lng;
+        
+        objects["1"].properties.angle = angle;
+        
+        objects["1"].other.marker.setLatLng([lat, lng]);
+        
+        $(".leaflet-div-icon-img:first").rotate(45-realAngle);
+        
+    }
     
-    lat+=.01;
-    objects['1'].properties.coordinates[0] = lat;
     
-    objects['1'].other.marker.setLatLng([lat, lng]);
+            
     
-    rotangle+=5;
-    
-    
-    
-    
-    $(".leaflet-marker-icon:first").css({background:"transparent", border:"0px"});
-    //
-    */
 }
+
+
 

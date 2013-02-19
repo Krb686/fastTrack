@@ -7,6 +7,7 @@
     <script src="http://code.jquery.com/ui/1.9.2/jquery-ui.js"></script>
     <script src="http://cdn.leafletjs.com/leaflet-0.5/leaflet.js"></script>
     <script type="text/javascript" src="/javascripts/jQueryRotate.2.2.js"></script>
+    <script type="text/javascript" src="/javascripts/jstree.js"></script>
     
     
     <link rel="stylesheet" href="http://cdn.leafletjs.com/leaflet-0.5/leaflet.css" />
@@ -79,6 +80,9 @@
 						<br>
 						<textarea id="testText"></textarea>
 					</div>
+					<div id="simulator" style="width:1000px;height:600px;border:2px solid;background-color:#E6E6E6;margin:10px;">
+						<input type="submit" name="startSimulation" value="New Simulation" onClick="startSimulation();" style="font-size:12px"/>
+					</div>
   				</div>
 			</td>
 		</tr>
@@ -109,6 +113,10 @@
  		    
  		   document.getElementById("testText").innerHTML +=string + "\n";
    		});
+	    
+	    function startSimulation(){
+	        socket.emit('simulation', 'hello');
+	    }
   	</script>
   </body>
 </html>

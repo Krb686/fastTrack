@@ -61,15 +61,15 @@ function startServer(app){
       startTrackLoader();
     });
     
-    
-    
 }
 
 
 function startTrackLoader () {
+    console.log('starting tms...');
     var connection = amqp.createConnection({host:'localhost'});
 
     connection.on('ready', function(){
+        console.log('connected.');
         
         //Create queue
         queueTMS = connection.queue('TMS', {autoDelete:false}, function(queue){
@@ -110,6 +110,10 @@ function connectSocket(socket){
         console.log(socket.id + '...disconnected.');
         delete socketList[socket.id];
         console.log('  # Users: ' + Object.keys(socketList).length);
+    });
+    
+    socket.on('simulation', function(data){
+       console.log(data); 
     });
 }
 
