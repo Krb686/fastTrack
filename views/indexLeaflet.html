@@ -54,8 +54,10 @@
 				<input type="submit" name="startTrackingSubmit" value="Start Tracking" onClick="startTracking();"/>
 				<input type="submit" name="stopTrackingSubmit" value="Stop Tracking" onClick="stopTracking();"/>
 				<br>
-				Mouse Pos: <input type="checkbox" name="mousePosCheck" value="Mouse Pos." onClick="showCoords();"/>
+				Mouse Pos: <input type="checkbox" name="mousePosCheck" value=false onClick="showCoords();"/>
 				<label id="textCoords"></label>
+				<br>
+				Track Lines: <input type="checkbox" name=trackLinesCheck" value=false onClick="showTrackLines();"/>
 			</td>
 		</tr>
 		<tr height="650px">
@@ -95,23 +97,7 @@
 	  	
 	    socket.on('TMS', function(data){
 	        counter++;
- 		    
- 		    trackArray.push(data);
- 		    
- 		    var string = data.type + ','
- 		    			+ data.utcTime + ','
- 		    			+ data.alertCode + ','
- 		    			+ data.lat + ','
- 		    			+ data.latHeading + ','
- 		    			+ data.lon + ','
- 		    			+ data.lonHeading + ','
- 		    			+ data.speedKnots + ','
- 		    			+ data.angle + ','
- 		    			+ data.date + ','
- 		    			+ data.id;
- 		    
- 		    
- 		   document.getElementById("testText").innerHTML +=string + "\n";
+	        trackArray.push(data);    
    		});
 	    
 	    function startSimulation(){

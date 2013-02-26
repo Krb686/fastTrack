@@ -3,12 +3,14 @@
 
 
 var radius = 10, tips = {};
-var map, polymaps, geoJsonLayer, tracking, intervalId, coordsChecked = false, mouseOnMap = false, placingObject = false;
+var map, polymaps, geoJsonLayer, tracking, intervalId, coordsChecked = false, trackLinesChecked = false, mouseOnMap = false, placingObject = false;
 var objects = {
         length:0
 };
 var trackArray = [];
 var tempObject;
+
+var refreshTime = 4000;
 
 var map = L.map('map', {
     center:[38.85, -77.38],
@@ -16,9 +18,9 @@ var map = L.map('map', {
 });
 
 
-L.tileLayer('http://{s}.tile.cloudmade.com/4d930419c5694793952eb15712060385/998/256/{z}/{x}/{y}.png', {
+L.tileLayer('cloudmade/images/998/256/{z}/{x}/{y}.png', {
     attribution: 'Map data &copy; <a href="http://openstreetmap.org">OpenStreetMap</a> contributors, <a href="http://creativecommons.org/licenses/by-sa/2.0/">CC-BY-SA</a>, Imagery © <a href="http://cloudmade.com">CloudMade</a>',
-    maxZoom: 18,
+    maxZoom: 8,
     
 }).addTo(map);
 
@@ -160,10 +162,18 @@ function showCoords(){
     }
 }
 
+function showTrackLines(){
+    if(trackLinesChecked == false){
+        trackLinesChecked = true;
+    } else {
+        trackLinesChecked = false;
+    }
+}
+
 function startTracking(){
     if(!tracking){
         tracking = true;
-        intervalId = setInterval(refresh, 10);
+        intervalId = setInterval(refresh, refreshTime);
     }
 }
 
@@ -194,12 +204,14 @@ function createObject(track){
                  "marker":L.marker([track.lat, track.lon], {
                      icon:L.divIcon({
                          iconSize:[20,20],
-                         html:"<img class='leaflet-div-icon-img' src='/images/airplane.gif'>"
+                         html:"<img class='leaflet-div-icon-img' id='planeImg" + objects.length + "' src='/images/airplane.gif'>"
                      })
                  }).addTo(map),
                  "icon":"images/airplane.png"
              }      
         };
+        
+        tempObject.other.marker.bindPopup("<b>Id: " + tempObject.id + "</b><br>   Longitude: " + tempObject.properties.coordinates[1] + "<br>   Latitude: " + tempObject.properties.coordinates[0]);
         
         
         
@@ -258,7 +270,6 @@ function createObject(track){
 
 
 
-rotangle = 20;
 var latChange;
 var lngChange;
 function refresh(){
@@ -293,7 +304,7 @@ function refresh(){
                 objects[trackId].other.marker.setLatLng([tLat, tLon]);
                 
                 
-                $(".leaflet-div-icon-img:first").rotate(tAngle);
+                $("#planeImg" + trackId).rotate(tAngle);
                 
                 document.getElementById("dvObj" + trackArray[i].id + "lat").innerHTML = "Latitude: " + trackArray[i].lat;
                 document.getElementById("dvObj" + trackArray[i].id + "lon").innerHTML = "Longitude: " + trackArray[i].lon;
@@ -310,18 +321,26 @@ function refresh(){
         var angle = objects["1"].properties.angle;
         var speedMPH = objects["1"].properties.speedMPH;
         
-        var miles = speedMPH/3600;
+        var miles = speedMPH/(60*60*(1000/refreshTime));
         
         var realAngle = (angle*-1)+450;
         
         
-        
+        //Angle bounds - 0 < angle < 360
         if(angle >= 360){
             console.log('changeeeeeeee');
             angle-=360;
         } else if(angle<=0){
             angle+=360;
         }
+        
+        if(realAngle >= 360){
+            realAngle-=360;
+        } else if(realAngle <= 0){
+            realAngle+=360;
+        }
+        
+        
         
         
         
@@ -336,8 +355,10 @@ function refresh(){
         lngChange = xMiles / (69.11*Math.cos(lat));
         
         //console.log(xMiles);
-        console.log(xMiles);
-        console.log(angle);
+        console.log("LAT Delta:" + latChange)
+        console.log("LNG Delta: " + lngChange);
+        console.log("Angle: " + angle);
+        console.log("Real Angle:" + realAngle);
         console.log("");
         
         
@@ -345,18 +366,18 @@ function refresh(){
         
         
         //Figure out how to add distance
-        if(realAngle <= 90){
+        if(angle <= 90){
             lat+=latChange;
             lng+=lngChange;
-        } else if(realAngle <= 180){
-            lat+=latChange;
-            lng-=lngChange;
-        } else if(realAngle <= 270){
+        } else if(angle <= 180){
+            lat-=latChange;
+            lng+=lngChange;
+        } else if(angle <= 270){
             lat-=latChange;
             lng-=lngChange;
         } else{
-            lat-=latChange;
-            lng+=lngChange;
+            lat+=latChange;
+            lng-=lngChange;
         }
         
         angle+=1;
@@ -371,7 +392,7 @@ function refresh(){
         
         objects["1"].other.marker.setLatLng([lat, lng]);
         
-        $(".leaflet-div-icon-img:first").rotate(45-realAngle);
+        $(".leaflet-div-icon-img:first").rotate(angle);
         
     }
     

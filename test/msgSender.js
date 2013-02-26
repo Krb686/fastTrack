@@ -2,56 +2,84 @@ var amqp = require('amqp');
 var NanoTimer = require('nanotimer');
 
 var timer = new NanoTimer();
-var object = {
-        'type':'$GPRMC',
-        'utcTime':123532,
-        'alertCode':'A',
-        'lat':35,
-        'latHeading':'N',
-        'lon':-122,
-        'lonHeading':'W',
-        'speedKnots':70,
-        'angle':277.5,
-        'date':180113,
-        'id':'1'
-};
 
-var object2 = {
-        'type':'$GPRMC',
-        'utcTime':123532,
-        'alertCode':'A',
-        'lat':37.30006,
-        'latHeading':'N',
-        'lon':-119,
-        'lonHeading':'W',
-        'speedKnots':70,
-        'angle':277.5,
-        'date':180113,
-        'id':'2'
+var objects = [];
+
+createObjects();
+
+function createObjects(){
+    var count = 200;
+    var id = 1;
+    var time = 123532;
+    var lat = 35;
+    var lon = -122;
+    var speedMPH = 25;
+    var angle = 277;
+    var date = 180113;
+    
+    
+    for(var i=0;i<count;i++){
+        var newObject = {
+            'type':'$GPRMC',
+            'utcTime':time,
+            'alertCode':'A',
+            'lat':lat,
+            'latHeading':'N',
+            'lon':lon,
+            'lonHeading':'W',
+            'speedMPH':speedMPH,
+            'angle':angle,
+            'date':date,
+            'id':id
+        };
         
-};
+        id+=1;
+        lat = (Math.random()*180) - 90;
+        lon = (Math.random() * 360) - 180;
+        speedMPH = (Math.random()*50) + 1;
+        angle = Math.random()*360;
+        
+        objects.push(newObject);
+    }
+    
+    
+}
 
+
+console.log(objects.length);
+
+//AMQP connection
 var connection = amqp.createConnection({host:'localhost'});
 
 connection.on('ready', function(){
-    
     timer.setInterval(function(){
-        connection.publish('TMS', object);
-        connection.publish('TMS', object2);
-        console.log('Sent msg');
+
+        
+        for(var i = 0;i < objects.length;i++){
+            
+            connection.publish('TMS', objects[i]);
+        }
+        
+        console.log('sent msgs');
+        
         moveObjects();
         
-    }, 1000000000);
+    }, 4000000000);
     
 });
 
+
+
+//PHYSICS
 var difLat1, difLon1, difLat2, difLon2 = null;
 
 function moveObjects(){
     
-    
-    object.utcTime+=1;
-    object.lon-=.1;
+    for(var i=0;i<objects.length;i++){
+        objects[i].utcTime+=1;
+        objects[i].lon-=.1;
+    }
+    /*
     
     if(difLat1 != null && difLon1 != null){
         var difLat1 = lastLat1 - object.lat;
@@ -63,23 +91,10 @@ function moveObjects(){
     
     
     
-    object2.utcTime+=1;
-    object2.lat+=.1;
-    object2.lon-=.1;
-    
-    if(difLat2 != null && difLon2 != null){
-        var difLat2 = lastLat1 - object.lat;
-        var difLon2 = lastLon1 - object.lon;
-    } else {
-        var difLat2 = 0;
-        var difLon2 = 0;
-    }
-    
     
     var angle1 = Math.atan(difLat1/difLon1);
-    var angle2 = Math.atan(difLat2/difLon2);
     
     console.log(angle1);
-    
+    */
     
 }

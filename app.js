@@ -66,7 +66,9 @@ function startServer(app){
 
 function startTrackLoader () {
     console.log('starting tms...');
-    var connection = amqp.createConnection({host:'localhost'});
+    var connection = amqp.createConnection({host:'localhost'}, function(cb){
+        console.log(cb);
+    });
 
     connection.on('ready', function(){
         console.log('connected.');

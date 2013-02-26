@@ -1,6 +1,6 @@
 
 var radius = 10, tips = {};
-var map, polymaps, geoJsonLayer, tracking, intervalId, coordsChecked = false, mouseOnMap = false, placingObject = false;
+var map, polymaps, geoJsonLayer, tracking, intervalId, coordsChecked = false, trackLinesChecked = false, mouseOnMap = false, placingObject = false;
 var objects = [];
 var trackArray = [];
 var idCounter = 0;
@@ -278,6 +278,14 @@ function showCoords(){
     } else {
         coordsChecked = false;
         document.getElementById("textCoords").innerHTML="";
+    }
+}
+
+function showTrackLines(){
+    if(trackLinesChecked == false){
+        trackLinesChecked = true;
+    } else {
+        trackLinesChecked = false;
     }
 }
 
