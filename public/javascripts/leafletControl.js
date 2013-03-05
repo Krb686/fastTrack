@@ -10,12 +10,25 @@ var objects = {
 var trackArray = [];
 var tempObject;
 
-var refreshTime = 4000;
+var refreshTime = 1000;
+
+var southWest = new L.LatLng(-85, -180);
+var northEast = new L.LatLng(85, 180);
+var mapBounds = new L.LatLngBounds(southWest, northEast);
+
+
 
 var map = L.map('map', {
     center:[38.85, -77.38],
-    zoom:8
+    zoom:8,
+    minZoom:1,
+    maxZoom:10
 });
+
+
+
+map.setMaxBounds(mapBounds);
+
 
 
 L.tileLayer('cloudmade/images/998/256/{z}/{x}/{y}.png', {
@@ -277,17 +290,20 @@ function refresh(){
     if(trackArray.length > 0){
         
         var i=0;
+        var t1 = new Date().getTime();
         //Progress through received tracks
         for(i=0;i<trackArray.length;i++){
-            var trackId = trackArray[i].id;
+            var track = trackArray.shift();
+            
+            var trackId = track.id;
             
             
             if(objects[trackId]){
                 //exists
-                var tLat = trackArray[i].lat;
-                var tLon = trackArray[i].lon;
-                var tAngle = trackArray[i].angle;
-                var tSpeed = trackArray[i].speedMPH;
+                var tLat = track.lat;
+                var tLon = track.lon;
+                var tAngle = track.angle;
+                var tSpeed = track.speedMPH;
                 
                 //Update lat-lon
                 objects[trackId].properties.coordinates[0] = tLat;
@@ -306,14 +322,18 @@ function refresh(){
                 
                 $("#planeImg" + trackId).rotate(tAngle);
                 
-                document.getElementById("dvObj" + trackArray[i].id + "lat").innerHTML = "Latitude: " + trackArray[i].lat;
-                document.getElementById("dvObj" + trackArray[i].id + "lon").innerHTML = "Longitude: " + trackArray[i].lon;
+                document.getElementById("dvObj" + track.id + "lat").innerHTML = "Latitude: " + track.lat;
+                document.getElementById("dvObj" + track.id + "lon").innerHTML = "Longitude: " + track.lon;
                    
             } else {
                 createObject(trackArray[i]);
                 console.log('making');
             }
         }
+        var t2 = new Date().getTime();
+        
+        var dif = t2 - t1;
+        console.log(dif + ' - ' + trackArray.length);
     } else {
         //manual movement for testing purposes
         var lat = objects["1"].properties.coordinates[0];

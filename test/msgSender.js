@@ -8,7 +8,7 @@ var objects = [];
 createObjects();
 
 function createObjects(){
-    var count = 200;
+    var count = 500;
     var id = 1;
     var time = 123532;
     var lat = 35;
@@ -64,7 +64,7 @@ connection.on('ready', function(){
         
         moveObjects();
         
-    }, 4000000000);
+    }, 2000000000);
     
 });
 
@@ -76,8 +76,14 @@ var difLat1, difLon1, difLat2, difLon2 = null;
 function moveObjects(){
     
     for(var i=0;i<objects.length;i++){
-        objects[i].utcTime+=1;
-        objects[i].lon-=.1;
+        if(i==0){
+            objects[i].utcTime+=1;
+            objects[i].lon-=.5;
+        } else {
+            objects[i].utcTime+=1;
+            objects[i].lon-=.1;
+        }
+        
     }
     /*
     
