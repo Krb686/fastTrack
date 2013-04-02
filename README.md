@@ -1,5 +1,4 @@
 FastTrack
-
 A graphical map display acting as a message sink for data sources like GPS
 
 Features To Add:
