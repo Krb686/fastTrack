@@ -1,18 +1,18 @@
 {
   "name": "FastTrack",
-  "version": "0.0.1",
-  "private": true,
-  "scripts": {
-    "start": "node app"
+  "version" : "0.0.1",
+  "private" : "true",
+  "scripts" : {
+    "start" : "node app"
   },
-  "dependencies": {
-    "express": "3.0.4",
-    "jade": "*",
-    "ejs":"*",
-    "amqp":"*",
-    "nanotimer":"*",
-    "mocha:"*",
-    "should":"*",
-    *socket.io":"*"
+  "dependencies" : {
+    "express" : "3.0.4",
+    "jade" : "",
+    "ejs" : "",
+    "amqp" : "",
+    "nanotimer" : "",
+    "mocha" : "",
+    "should" : "",
+    "socket.io" : ""
   }
 }
