@@ -29,14 +29,22 @@ var map = L.map('map', {
 
 map.setMaxBounds(mapBounds);
 
+//styles
+//998
+//
 
+L.tileLayer('http://{s}.tile.cloudmade.com/4d930419c5694793952eb15712060385/2400/256/{z}/{x}/{y}.png', {
+    attribution: 'Map data &copy; <a href="http://openstreetmap.org">OpenStreetMap</a> contributors, <a href="http://creativecommons.org/licenses/by-sa/2.0/">CC-BY-SA</a>, Imagery © <a href="http://cloudmade.com">CloudMade</a>',
+    maxZoom: 18
+}).addTo(map);
 
+/*
 L.tileLayer('cloudmade/images/998/256/{z}/{x}/{y}.png', {
     attribution: 'Map data &copy; <a href="http://openstreetmap.org">OpenStreetMap</a> contributors, <a href="http://creativecommons.org/licenses/by-sa/2.0/">CC-BY-SA</a>, Imagery © <a href="http://cloudmade.com">CloudMade</a>',
     maxZoom: 8,
     
 }).addTo(map);
-
+*/
 
 
 addDefaultObjects();

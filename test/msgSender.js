@@ -64,7 +64,7 @@ connection.on('ready', function(){
         
         moveObjects();
         
-    }, 2000000000);
+    }, '2s');
     
 });
 
